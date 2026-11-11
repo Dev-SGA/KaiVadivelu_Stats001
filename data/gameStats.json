@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "title": "Stats Game Report",
+    "subtitle": "Individual match statistics",
+    "session": "001"
+  },
+  "player": {
+    "name": "Kai Vadivelu",
+    "club": "Cincinnati United Soccer Club",
+    "clubLogo": "",
+    "photo": ""
+  },
+  "matches": [
+    {
+      "id": "vardar",
+      "kind": "session",
+      "label": "vs Vardar Soccer Club",
+      "shortLabel": "Vardar",
+      "logo": "/clubs/vardar.png",
+      "goals": 0,
+      "assists": 0,
+      "passesUnderPressure": {
+        "total": 44,
+        "underPressure": 0,
+        "notUnderPressure": 0,
+        "videoLink": ""
+      },
+      "passResults": {
+        "combined": {
+          "progressive": 12,
+          "neutral": 21,
+          "lost": 11
+        },
+        "videoLink": ""
+      },
+      "possessions": {
+        "total": 51,
+        "lostBalls": 5,
+        "wrongPasses": 11,
+        "lostPlays": 16,
+        "videoLink": ""
+      },
+      "attackingMovement": {
+        "overlaps": { "total": 5, "received": 1 },
+        "underlaps": { "total": 1, "received": 0 }
+      },
+      "videos": [],
+      "duels": {
+        "offensiveWon": { "actions": 0, "good": 0, "bad": 0 },
+        "offensiveLost": { "actions": 0, "good": 0, "bad": 0 },
+        "fouled": { "actions": 0, "good": 0, "bad": 0 },
+        "defensiveWon": { "actions": 8, "good": 0, "bad": 0 },
+        "defensiveLost": { "actions": 2, "good": 0, "bad": 0 },
+        "fouls": { "actions": 0, "good": 0, "bad": 0 },
+        "interception": { "actions": 8, "good": 0, "bad": 0 },
+        "recovery": { "actions": 5, "good": 0, "bad": 0 }
+      }
+    }
+  ]
+}
