@@ -3,8 +3,8 @@ import "./globals.css";
 import "./pdf.css";
 
 export const metadata: Metadata = {
-  title: "Hudson Cicala — Game Stats 002 | SGA Performance",
-  description: "Match statistics for Hudson Cicala across Chicago Fire, Columbus Crew and St. Louis City SC.",
+  title: "Kai Vadivelu — Game Stats 001 | SGA Performance",
+  description: "Match statistics for Kai Vadivelu against Vardar Soccer Club.",
 };
 
 export const viewport = {
