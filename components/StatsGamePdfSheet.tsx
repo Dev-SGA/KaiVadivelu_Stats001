@@ -403,6 +403,28 @@ function SummaryStatCard({
   );
 }
 
+function GoalsAssistsCard({ goals, assists, games }: { goals: number; assists: number; games?: number }) {
+  const items = [
+    { label: "Goals", value: goals },
+    { label: "Assists", value: assists },
+  ];
+
+  return (
+    <section className="spdf-section spdf-section--build-up spdf-section--summary spdf-section--goals">
+      <h3 className="spdf-section__title">Goals &amp; Assists</h3>
+      <div className="spdf-summary-kpis">
+        {items.map((item) => (
+          <div key={item.label} className="spdf-summary-kpi">
+            <span className="spdf-summary-kpi__value">{formatCount(item.value)}</span>
+            <span className="spdf-summary-kpi__label">{item.label}</span>
+            {games ? <span className="spdf-summary-kpi__per">{perGame(item.value, games)} per game</span> : null}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function SummaryPdfPage({
   stats,
   photoUrl,
@@ -543,6 +565,7 @@ function SummaryPdfPage({
               },
             ]}
           />
+          <GoalsAssistsCard goals={summary.goals} assists={summary.assists} games={games} />
         </div>
         <footer className="spdf-foot">
           <span>{BRAND.name}</span>
@@ -555,99 +578,196 @@ function SummaryPdfPage({
   );
 }
 
+function PageSection({
+  title,
+  kpi,
+  unit,
+  note,
+  children,
+}: {
+  title: string;
+  kpi: number;
+  unit: string;
+  note?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="spdf-section spdf-section--build-up spdf-p2-section">
+      <div className="spdf-p2-head">
+        <p className="spdf-p2-head__phase">Build-Up</p>
+        <h3 className="spdf-p2-head__title">{title}</h3>
+      </div>
+      <div className="spdf-p2-body">
+        <div className="spdf-p2-kpi">
+          <span className="spdf-p2-kpi__value">{formatCount(kpi)}</span>
+          <span className="spdf-p2-kpi__unit">{unit}</span>
+          {note ? <span className="spdf-p2-kpi__note">{note}</span> : null}
+        </div>
+        <div className="spdf-p2-content">{children}</div>
+      </div>
+    </section>
+  );
+}
+
+function PassResultsRow({ breakdown, videos }: { breakdown: PassResultBreakdown; videos?: GameStats["videos"] }) {
+  const total = breakdown.progressive + breakdown.neutral + breakdown.lost;
+  const turnovers = Math.min(breakdown.turnovers ?? 0, breakdown.lost);
+  const items = [
+    {
+      key: "progressive",
+      label: "Progressive Pass",
+      value: breakdown.progressive,
+      tone: "pass-progressive",
+      clip: clipRef(videos, "Progressive Passes", "Progressive Pass"),
+      nested: false,
+    },
+    {
+      key: "inaccurate",
+      label: "Inaccurate Pass",
+      value: breakdown.lost,
+      tone: "pass-inaccurate",
+      clip: clipRef(videos, "Inaccurate Passes", "Inaccurate Pass"),
+      nested: false,
+    },
+    {
+      key: "turnover",
+      label: "Turnover Pass",
+      value: turnovers,
+      tone: "pass-turnover",
+      clip: clipRef(videos, "Turnover Passes", "Turnover Pass"),
+      nested: true,
+    },
+    { key: "other", label: "Other", value: breakdown.neutral, tone: "pass-neutral", clip: undefined, nested: false },
+  ];
+  const bar = [
+    { key: "progressive", value: breakdown.progressive, tone: "pass-progressive", host: false },
+    { key: "inaccurate", value: breakdown.lost, tone: "pass-inaccurate", host: true },
+    { key: "other", value: breakdown.neutral, tone: "pass-neutral", host: false },
+  ].filter((segment) => segment.value > 0);
+
+  return (
+    <div className="spdf-p2-pass">
+      <div className="spdf-p2-pass__track">
+        {bar.map((segment) => (
+          <span
+            key={segment.key}
+            className={`spdf-pass-panel__seg spdf-pass-panel__seg--${segment.tone}${segment.host ? " spdf-pass-panel__seg--host" : ""}`}
+            style={{ width: `${pct(segment.value, total)}%` }}
+          >
+            {segment.host && turnovers > 0 ? (
+              <span
+                className="spdf-pass-panel__seg-inner spdf-pass-panel__seg--pass-turnover"
+                style={{ width: `${pct(turnovers, segment.value)}%` }}
+              />
+            ) : null}
+          </span>
+        ))}
+      </div>
+      <ul className="spdf-p2-pass__legend">
+        {items.map((item) => (
+          <li key={item.key} className={`spdf-p2-pass__item${item.nested ? " is-nested" : ""}`}>
+            <span className="spdf-p2-pass__label">
+              <span className={`spdf-pass-panel__dot spdf-pass-panel__dot--${item.tone}`} />
+              {item.label}
+              <PdfPlay clip={item.clip} />
+            </span>
+            <strong className="spdf-p2-pass__value">
+              {formatCount(item.value)}
+              {item.nested ? null : <em> · {pct(item.value, total)}%</em>}
+            </strong>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function RunCard({ title, total, received, clip }: { title: string; total: number; received: number; clip?: ClipRef }) {
+  const missed = Math.max(total - received, 0);
+  return (
+    <div className="spdf-p2-run">
+      <div className="spdf-p2-run__top">
+        <span className="spdf-p2-run__title">
+          {title}
+          <PdfPlay clip={clip} />
+        </span>
+        <span className="spdf-p2-run__figure">
+          <strong>{formatCount(received)}</strong>/{formatCount(total)} <em>received</em>
+        </span>
+      </div>
+      <div className="spdf-p2-run__track">
+        {received > 0 ? (
+          <span className="spdf-pass-panel__seg spdf-pass-panel__seg--pass-progressive" style={{ width: `${pct(received, total)}%` }} />
+        ) : null}
+        <span className="spdf-pass-panel__seg spdf-pass-panel__seg--pass-neutral" style={{ width: `${total === 0 ? 100 : pct(missed, total)}%` }} />
+      </div>
+      <ul className="spdf-p2-run__legend">
+        <li>
+          <span className="spdf-pass-panel__dot spdf-pass-panel__dot--pass-progressive" />
+          Received the ball <strong>{formatCount(received)}</strong>
+        </li>
+        <li>
+          <span className="spdf-pass-panel__dot spdf-pass-panel__dot--pass-neutral" />
+          Not received <strong>{formatCount(missed)}</strong>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
 export function StatsGamePdfSheet({ stats, photoUrl, logoUrl, clubLogoUrl, opponentLogoUrl }: StatsGamePdfSheetProps) {
-  const { player, meta, passesUnderPressure, passResults, possessions } = stats;
-  const passTotal = passesUnderPressure.total;
+  const { player, meta, passesUnderPressure, passResults, possessions, attackingMovement } = stats;
   const games = meta.games;
   const turnovers = (possessions.passTurnover ?? 0) + (possessions.duelTurnover ?? 0);
+  const retained = Math.max(possessions.total - possessions.lostPlays, 0);
 
   return (
     <>
-    <SummaryPdfPage
-      stats={stats}
-      photoUrl={photoUrl}
-      logoUrl={logoUrl}
-      clubLogoUrl={clubLogoUrl}
-      opponentLogoUrl={opponentLogoUrl}
-    />
-    <article className="stats-pdf stats-pdf--page1" aria-hidden="true">
-      <PdfSide photoUrl={photoUrl} logoUrl={logoUrl} clubLogoUrl={clubLogoUrl} name={player.name} club={player.club} />
+      <SummaryPdfPage
+        stats={stats}
+        photoUrl={photoUrl}
+        logoUrl={logoUrl}
+        clubLogoUrl={clubLogoUrl}
+        opponentLogoUrl={opponentLogoUrl}
+      />
+      <article className="stats-pdf" aria-hidden="true">
+        <PdfSide photoUrl={photoUrl} logoUrl={logoUrl} clubLogoUrl={clubLogoUrl} name={player.name} club={player.club} />
 
-      <div className="spdf-main">
-        <PdfHeader title={meta.title} subtitle={meta.subtitle} opponentLogoUrl={opponentLogoUrl} />
+        <div className="spdf-main">
+          <PdfHeader title={meta.title} subtitle={meta.subtitle} opponentLogoUrl={opponentLogoUrl} />
 
-        <div className="spdf-stack">
-          <PdfSection
-            title="Pass Results"
-            kpi={passTotal}
-            unit="Passes"
-            size="lg"
-            panelOnly
-            className="spdf-section--pass-results"
-          >
-            <div className="spdf-pass-results-app">
-              <PassResultPanel
-                wide
-                title="Total Passes"
-                breakdown={combinedPassResults(passResults)}
-                videos={stats.videos}
-              />
-              {passResults.underPressure && passResults.notUnderPressure ? (
-                <div className="spdf-pass-results-app__pair">
-                  <PassResultPanel title="Under pressure" breakdown={passResults.underPressure} videos={stats.videos} />
-                  <PassResultPanel title="Not under pressure" breakdown={passResults.notUnderPressure} videos={stats.videos} />
+          <div className="spdf-p2-stack">
+            <PageSection title="Pass Results" kpi={passesUnderPressure.total} unit="Passes">
+              <PassResultsRow breakdown={combinedPassResults(passResults)} videos={stats.videos} />
+            </PageSection>
+
+            {attackingMovement ? (
+              <PageSection
+                title="Attacking Movement"
+                kpi={attackingMovement.overlaps.total + attackingMovement.underlaps.total}
+                unit="Runs"
+                note={`${attackingMovement.overlaps.received + attackingMovement.underlaps.received} received`}
+              >
+                <div className="spdf-p2-runs">
+                  <RunCard
+                    title="Overlaps"
+                    total={attackingMovement.overlaps.total}
+                    received={attackingMovement.overlaps.received}
+                    clip={clipRef(stats.videos, "Overlaps", "Overlap")}
+                  />
+                  <RunCard
+                    title="Underlaps"
+                    total={attackingMovement.underlaps.total}
+                    received={attackingMovement.underlaps.received}
+                    clip={clipRef(stats.videos, "Underlaps", "Underlap")}
+                  />
                 </div>
-              ) : null}
-            </div>
-          </PdfSection>
+              </PageSection>
+            ) : null}
 
-          {stats.attackingMovement ? (
-            <PdfSection
-              title="Attacking Movement"
-              kpi={stats.attackingMovement.overlaps.total + stats.attackingMovement.underlaps.total}
-              unit="Runs"
-              aside={`${stats.attackingMovement.overlaps.received + stats.attackingMovement.underlaps.received} received`}
-            >
-              <div className="spdf-possession-breakdowns">
-                <PdfPossessionSplit
-                  title="Overlaps"
-                  rows={[
-                    { label: "Received the ball", value: stats.attackingMovement.overlaps.received, tone: "lost-yellow-deep" },
-                    {
-                      label: "Not received",
-                      value: Math.max(stats.attackingMovement.overlaps.total - stats.attackingMovement.overlaps.received, 0),
-                      tone: "lost-yellow-mid",
-                    },
-                  ]}
-                />
-                <PdfPossessionSplit
-                  title="Underlaps"
-                  rows={[
-                    { label: "Received the ball", value: stats.attackingMovement.underlaps.received, tone: "lost-yellow-deep" },
-                    {
-                      label: "Not received",
-                      value: Math.max(stats.attackingMovement.underlaps.total - stats.attackingMovement.underlaps.received, 0),
-                      tone: "lost-yellow-mid",
-                    },
-                  ]}
-                />
-              </div>
-            </PdfSection>
-          ) : null}
-
-          <PdfSection
-            title="Possessions"
-            kpi={possessions.total}
-            unit="Total possessions"
-          >
-            <div className="spdf-possession-layout">
-              <div className="spdf-possession-stat-cards">
-                <PdfPossessionStatCard
-                  label="Retained"
-                  value={Math.max(possessions.total - possessions.lostPlays, 0)}
-                  share={pct(Math.max(possessions.total - possessions.lostPlays, 0), possessions.total)}
-                  tone="retained"
-                />
+            <PageSection title="Possessions" kpi={possessions.total} unit="Total possessions">
+              <div className="spdf-p2-poss">
+                <PdfPossessionStatCard label="Retained" value={retained} share={pct(retained, possessions.total)} tone="retained" />
                 <PdfPossessionStatCard
                   label="Lost plays"
                   value={possessions.lostPlays}
@@ -662,8 +782,6 @@ export function StatsGamePdfSheet({ stats, photoUrl, logoUrl, clubLogoUrl, oppon
                   tone="turnovers"
                   perGameLabel={games ? `${perGame(turnovers, games)} per game` : undefined}
                 />
-              </div>
-              <div className="spdf-possession-breakdowns">
                 <PdfPossessionSplit
                   title="Lost play breakdown"
                   rows={[
@@ -699,18 +817,17 @@ export function StatsGamePdfSheet({ stats, photoUrl, logoUrl, clubLogoUrl, oppon
                   ]}
                 />
               </div>
-            </div>
-          </PdfSection>
-        </div>
+            </PageSection>
+          </div>
 
-        <footer className="spdf-foot">
-          <span>{BRAND.name}</span>
-          <span>
-            {player.name} · {meta.subtitle}
-          </span>
-        </footer>
-      </div>
-    </article>
+          <footer className="spdf-foot">
+            <span>{BRAND.name}</span>
+            <span>
+              {player.name} · {meta.subtitle}
+            </span>
+          </footer>
+        </div>
+      </article>
     </>
   );
 }
