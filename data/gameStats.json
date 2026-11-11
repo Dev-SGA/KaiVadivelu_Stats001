@@ -29,7 +29,8 @@
         "combined": {
           "progressive": 12,
           "neutral": 21,
-          "lost": 11
+          "lost": 11,
+          "turnovers": 6
         },
         "videoLink": ""
       },
@@ -38,6 +39,8 @@
         "lostBalls": 5,
         "wrongPasses": 11,
         "lostPlays": 16,
+        "passTurnover": 6,
+        "duelTurnover": 3,
         "videoLink": ""
       },
       "attackingMovement": {
