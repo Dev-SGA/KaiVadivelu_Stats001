@@ -403,28 +403,6 @@ function SummaryStatCard({
   );
 }
 
-function GoalsAssistsCard({ goals, assists, games }: { goals: number; assists: number; games?: number }) {
-  const items = [
-    { label: "Goals", value: goals },
-    { label: "Assists", value: assists },
-  ];
-
-  return (
-    <section className="spdf-section spdf-section--build-up spdf-section--summary spdf-section--goals">
-      <h3 className="spdf-section__title">Goals &amp; Assists</h3>
-      <div className="spdf-summary-kpis">
-        {items.map((item) => (
-          <div key={item.label} className="spdf-summary-kpi">
-            <span className="spdf-summary-kpi__value">{formatCount(item.value)}</span>
-            <span className="spdf-summary-kpi__label">{item.label}</span>
-            {games ? <span className="spdf-summary-kpi__per">{perGame(item.value, games)} per game</span> : null}
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function SummaryPdfPage({
   stats,
   photoUrl,
@@ -517,49 +495,6 @@ function SummaryPdfPage({
             ]}
           />
           ) : null}
-          {stats.attackingMovement ? (
-            <SummaryStatCard
-              title="Attacking movement"
-              total={stats.attackingMovement.overlaps.total + stats.attackingMovement.underlaps.total}
-              totalLabel="Total runs"
-              segments={[
-                {
-                  label: "Overlaps",
-                  value: `${formatCount(stats.attackingMovement.overlaps.received)}/${formatCount(stats.attackingMovement.overlaps.total)} received`,
-                  share: stats.attackingMovement.overlaps.total,
-                  tone: "pass-progressive",
-                },
-                {
-                  label: "Underlaps",
-                  value: `${formatCount(stats.attackingMovement.underlaps.received)}/${formatCount(stats.attackingMovement.underlaps.total)} received`,
-                  share: stats.attackingMovement.underlaps.total,
-                  tone: "blue",
-                },
-              ]}
-            />
-          ) : null}
-          <SummaryStatCard
-            title="Tackles"
-            total={summary.regains}
-            totalLabel="Total tackles"
-            perGameLabel={games ? `${perGame(summary.regains, games)} per game` : undefined}
-            segments={[
-              {
-                label: "Interceptions",
-                value: formatCount(summary.interceptions),
-                share: summary.interceptions,
-                tone: "blue",
-                clip: clipRef(stats.videos, "Interceptions"),
-              },
-              {
-                label: "Recoveries",
-                value: formatCount(summary.recoveries),
-                share: summary.recoveries,
-                tone: "mint",
-                clip: clipRef(stats.videos, "Recoveries"),
-              },
-            ]}
-          />
           <SummaryStatCard
             title="Defensive duels"
             total={summary.defensiveWon + summary.defensiveLost}
@@ -586,7 +521,28 @@ function SummaryPdfPage({
               },
             ]}
           />
-          <GoalsAssistsCard goals={summary.goals} assists={summary.assists} games={games} />
+          <SummaryStatCard
+            title="Tackles"
+            total={summary.regains}
+            totalLabel="Total tackles"
+            perGameLabel={games ? `${perGame(summary.regains, games)} per game` : undefined}
+            segments={[
+              {
+                label: "Interceptions",
+                value: formatCount(summary.interceptions),
+                share: summary.interceptions,
+                tone: "blue",
+                clip: clipRef(stats.videos, "Interceptions"),
+              },
+              {
+                label: "Recoveries",
+                value: formatCount(summary.recoveries),
+                share: summary.recoveries,
+                tone: "mint",
+                clip: clipRef(stats.videos, "Recoveries"),
+              },
+            ]}
+          />
         </div>
         <footer className="spdf-foot">
           <span>{BRAND.name}</span>
@@ -644,6 +600,40 @@ export function StatsGamePdfSheet({ stats, photoUrl, logoUrl, clubLogoUrl, oppon
               ) : null}
             </div>
           </PdfSection>
+
+          {stats.attackingMovement ? (
+            <PdfSection
+              title="Attacking Movement"
+              kpi={stats.attackingMovement.overlaps.total + stats.attackingMovement.underlaps.total}
+              unit="Runs"
+              aside={`${stats.attackingMovement.overlaps.received + stats.attackingMovement.underlaps.received} received`}
+            >
+              <div className="spdf-possession-breakdowns">
+                <PdfPossessionSplit
+                  title="Overlaps"
+                  rows={[
+                    { label: "Received the ball", value: stats.attackingMovement.overlaps.received, tone: "lost-yellow-deep" },
+                    {
+                      label: "Not received",
+                      value: Math.max(stats.attackingMovement.overlaps.total - stats.attackingMovement.overlaps.received, 0),
+                      tone: "lost-yellow-mid",
+                    },
+                  ]}
+                />
+                <PdfPossessionSplit
+                  title="Underlaps"
+                  rows={[
+                    { label: "Received the ball", value: stats.attackingMovement.underlaps.received, tone: "lost-yellow-deep" },
+                    {
+                      label: "Not received",
+                      value: Math.max(stats.attackingMovement.underlaps.total - stats.attackingMovement.underlaps.received, 0),
+                      tone: "lost-yellow-mid",
+                    },
+                  ]}
+                />
+              </div>
+            </PdfSection>
+          ) : null}
 
           <PdfSection
             title="Possessions"
