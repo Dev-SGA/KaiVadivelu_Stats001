@@ -1975,3 +1975,9 @@
 .spdf-p2-poss .spdf-possession-row__label {
   white-space: nowrap;
 }
+
+/* Keep athlete photo undistorted in the fixed slot */
+.spdf-side__photo {
+  object-fit: cover;
+  object-position: center top;
+}
