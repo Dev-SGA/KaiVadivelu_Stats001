@@ -291,6 +291,7 @@ function StatsFigure({
 
 function StatsRateTopic({
   title,
+  titleClip,
   total,
   totalLabel,
   totalUnit,
@@ -320,13 +321,30 @@ function StatsRateTopic({
   secondaryLabel: string;
   primaryTone: Tone;
   secondaryTone: Tone;
+  titleClip?: ClipRef;
   primaryClip?: ClipRef;
   secondaryClip?: ClipRef;
   showShare?: boolean;
 }) {
   return (
     <section className="stats-topic">
-      <h3 className="stats-topic__title">{title}</h3>
+      <h3 className="stats-topic__title">
+        {titleClip?.href ? (
+          <a className="clip-link" href={titleClip.href} target="_blank" rel="noreferrer">
+            {title}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/play-icon.png" alt="" className="play-icon" width={14} height={14} />
+          </a>
+        ) : (
+          <>
+            {title}
+            {titleClip?.hasClip ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/brand/play-icon.png" alt="" className="play-icon play-icon--pending" width={14} height={14} />
+            ) : null}
+          </>
+        )}
+      </h3>
       <div className="stats-topic__panel">
         <StatsFigure label={totalLabel} value={total} unit={totalUnit} games={games} />
         <StatsFigure label={rateLabel} value={rate} rate />
@@ -478,6 +496,7 @@ export function AttackingMovementBoard({
         <StatsRateTopic
           key={title}
           title={title}
+          titleClip={clip}
           total={stat.total}
           totalLabel={`Total ${title.toLowerCase()}`}
           totalUnit={title.toLowerCase()}
@@ -490,7 +509,6 @@ export function AttackingMovementBoard({
           secondaryLabel="Not received"
           primaryTone="positive"
           secondaryTone="muted"
-          primaryClip={clip}
           showShare={false}
         />
       ))}
