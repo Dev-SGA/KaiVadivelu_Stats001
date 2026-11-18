@@ -106,7 +106,18 @@
         "overlaps": { "total": 2, "received": 2 },
         "underlaps": { "total": 3, "received": 1 }
       },
-      "videos": [],
+      "videos": [
+        { "label": "Progressive Passes", "url": "https://drive.google.com/file/d/1rZmeVrqZh1kjvJsvYG1_yGTrM0ge6ynU/view?usp=drive_link" },
+        { "label": "Inaccurate Passes", "url": "https://drive.google.com/file/d/1Cn1EqkviPatbinfu7jUwQ5dOHa_aiO2h/view?usp=drive_link" },
+        { "label": "Turnover Passes", "url": "https://drive.google.com/file/d/1PZKL7uPJh2IEnzRCyzDXX-R0ItjgOwrF/view?usp=drive_link" },
+        { "label": "Turnover Duels", "url": "https://drive.google.com/file/d/1IDuAaR7gr7EtAY9lrCczjNT5P5rh2Ybf/view?usp=drive_link" },
+        { "label": "Def. Duels Won", "url": "https://drive.google.com/file/d/1qsg9Agr4IIzQVHjQR9LrruT0MhESoFRO/view?usp=drive_link" },
+        { "label": "Def. Duels Lost", "url": "https://drive.google.com/file/d/1QAR98YiFFcvMKtBhSpiMQF6-K7uqog9_/view?usp=drive_link" },
+        { "label": "Recoveries", "url": "https://drive.google.com/file/d/1YvkkzANXd0agf74D9bKl0eK5In6keD7y/view?usp=drive_link" },
+        { "label": "Interceptions", "url": "https://drive.google.com/file/d/1HU7naYcdUduIpiaprhurmN9fmiR5OlI7/view?usp=drive_link" },
+        { "label": "Overlaps", "url": "https://drive.google.com/file/d/15ZRFt60oZlI32WM1_ydVw2GCTANBnk5m/view?usp=drive_link" },
+        { "label": "Underlaps", "url": "https://drive.google.com/file/d/1xOiWmP4WzbYIckuWKBbZiQCVpgDb_sgI/view?usp=drive_link" }
+      ],
       "duels": {
         "offensiveWon": { "actions": 0, "good": 0, "bad": 0 },
         "offensiveLost": { "actions": 0, "good": 0, "bad": 0 },
