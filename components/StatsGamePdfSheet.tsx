@@ -795,7 +795,6 @@ export function StatsGamePdfSheet({ stats, photoUrl, logoUrl, clubLogoUrl, oppon
                       label: "Inaccurate Pass",
                       value: possessions.wrongPasses,
                       tone: "lost-yellow-mid",
-                      clip: clipRef(stats.videos, "Inaccurate Passes", "Inaccurate Pass"),
                     },
                   ]}
                 />
@@ -812,7 +811,6 @@ export function StatsGamePdfSheet({ stats, photoUrl, logoUrl, clubLogoUrl, oppon
                       label: "Turnover Pass",
                       value: possessions.passTurnover ?? 0,
                       tone: "lost-yellow-mid",
-                      clip: clipRef(stats.videos, "Turnover Passes", "Turnover Pass"),
                     },
                   ]}
                 />
