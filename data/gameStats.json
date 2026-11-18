@@ -69,6 +69,51 @@
         "interception": { "actions": 8, "good": 0, "bad": 0 },
         "recovery": { "actions": 5, "good": 0, "bad": 0 }
       }
+    },
+    {
+      "id": "hoosier-premier",
+      "kind": "session",
+      "label": "vs Hoosier Premier Academy",
+      "shortLabel": "Hoosier Premier",
+      "logo": "/clubs/hoosier-premier.png",
+      "goals": 0,
+      "assists": 0,
+      "passesUnderPressure": {
+        "total": 48,
+        "underPressure": 0,
+        "notUnderPressure": 0,
+        "videoLink": ""
+      },
+      "passResults": {
+        "combined": {
+          "progressive": 12,
+          "neutral": 24,
+          "lost": 12
+        },
+        "videoLink": ""
+      },
+      "possessions": {
+        "total": 53,
+        "lostBalls": 0,
+        "wrongPasses": 12,
+        "lostPlays": 12,
+        "videoLink": ""
+      },
+      "attackingMovement": {
+        "overlaps": { "total": 2, "received": 2 },
+        "underlaps": { "total": 3, "received": 1 }
+      },
+      "videos": [],
+      "duels": {
+        "offensiveWon": { "actions": 0, "good": 0, "bad": 0 },
+        "offensiveLost": { "actions": 0, "good": 0, "bad": 0 },
+        "fouled": { "actions": 0, "good": 0, "bad": 0 },
+        "defensiveWon": { "actions": 4, "good": 0, "bad": 0 },
+        "defensiveLost": { "actions": 8, "good": 0, "bad": 0 },
+        "fouls": { "actions": 0, "good": 0, "bad": 0 },
+        "interception": { "actions": 6, "good": 0, "bad": 0 },
+        "recovery": { "actions": 8, "good": 0, "bad": 0 }
+      }
     }
   ]
 }
