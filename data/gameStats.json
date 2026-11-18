@@ -88,15 +88,18 @@
         "combined": {
           "progressive": 12,
           "neutral": 24,
-          "lost": 12
+          "lost": 12,
+          "turnovers": 7
         },
         "videoLink": ""
       },
       "possessions": {
         "total": 53,
-        "lostBalls": 0,
+        "lostBalls": 1,
         "wrongPasses": 12,
-        "lostPlays": 12,
+        "lostPlays": 13,
+        "passTurnover": 7,
+        "duelTurnover": 1,
         "videoLink": ""
       },
       "attackingMovement": {
