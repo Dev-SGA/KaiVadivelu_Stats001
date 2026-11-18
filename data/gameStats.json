@@ -112,10 +112,10 @@
         "offensiveLost": { "actions": 0, "good": 0, "bad": 0 },
         "fouled": { "actions": 0, "good": 0, "bad": 0 },
         "defensiveWon": { "actions": 4, "good": 0, "bad": 0 },
-        "defensiveLost": { "actions": 8, "good": 0, "bad": 0 },
+        "defensiveLost": { "actions": 7, "good": 0, "bad": 0 },
         "fouls": { "actions": 0, "good": 0, "bad": 0 },
-        "interception": { "actions": 6, "good": 0, "bad": 0 },
-        "recovery": { "actions": 8, "good": 0, "bad": 0 }
+        "interception": { "actions": 5, "good": 0, "bad": 0 },
+        "recovery": { "actions": 9, "good": 0, "bad": 0 }
       }
     }
   ]
