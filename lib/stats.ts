@@ -388,3 +388,160 @@ export function toGameStats(report: StatsReport, match: MatchStats): GameStats {
     attackingMovement: match.attackingMovement,
   };
 }
+
+export type ProgressPoint = {
+  id: string;
+  label: string;
+  shortLabel: string;
+  logo: string;
+  quantity: number;
+  /** Success rate in percent (0-100). */
+  quality?: number;
+  qualityDetail?: string;
+};
+
+export type ProgressMetric = {
+  id: string;
+  title: string;
+  phase: "build-up" | "defensive";
+  quantityLabel: string;
+  qualityLabel?: string;
+  points: ProgressPoint[];
+};
+
+/** Metrics tracked in every match, ready for match-by-match trend charts. */
+export function progressMetrics(matches: MatchStats[]): ProgressMetric[] {
+  const base = (match: MatchStats) => ({
+    id: match.id,
+    label: match.label,
+    shortLabel: match.shortLabel,
+    logo: match.logo,
+  });
+  const everyDuels = matches.every((match) => match.duels != null);
+  const everyMovement = matches.every((match) => match.attackingMovement != null);
+
+  const metrics: (ProgressMetric | null)[] = [
+    {
+      id: "passes",
+      title: "Passes",
+      phase: "build-up",
+      quantityLabel: "Passes",
+      qualityLabel: "Accurate",
+      points: matches.map((match) => {
+        const passes = passTotals(match);
+        return {
+          ...base(match),
+          quantity: passes.total,
+          quality: rate(passes.accurate, passes.total),
+          qualityDetail: `${passes.accurate} of ${passes.total} accurate`,
+        };
+      }),
+    },
+    {
+      id: "progressive-passes",
+      title: "Progressive Passes",
+      phase: "build-up",
+      quantityLabel: "Progressive",
+      qualityLabel: "Share of passes",
+      points: matches.map((match) => {
+        const passes = passTotals(match);
+        return {
+          ...base(match),
+          quantity: passes.progressive,
+          quality: rate(passes.progressive, passes.total),
+          qualityDetail: `${passes.progressive} of ${passes.total} passes`,
+        };
+      }),
+    },
+    {
+      id: "possessions",
+      title: "Possessions",
+      phase: "build-up",
+      quantityLabel: "Possessions",
+      qualityLabel: "Kept",
+      points: matches.map((match) => {
+        const kept = match.possessions.total - match.possessions.lostPlays;
+        return {
+          ...base(match),
+          quantity: match.possessions.total,
+          quality: rate(kept, match.possessions.total),
+          qualityDetail: `${kept} of ${match.possessions.total} kept`,
+        };
+      }),
+    },
+    everyMovement
+      ? {
+          id: "attacking-movement",
+          title: "Attacking Movement",
+          phase: "build-up",
+          quantityLabel: "Runs",
+          qualityLabel: "Received",
+          points: matches.map((match) => {
+            const movement = match.attackingMovement;
+            const total = (movement?.overlaps.total ?? 0) + (movement?.underlaps.total ?? 0);
+            const received = (movement?.overlaps.received ?? 0) + (movement?.underlaps.received ?? 0);
+            return {
+              ...base(match),
+              quantity: total,
+              quality: rate(received, total),
+              qualityDetail: `${received} of ${total} runs received`,
+            };
+          }),
+        }
+      : null,
+    everyDuels
+      ? {
+          id: "offensive-duels",
+          title: "Offensive Duels",
+          phase: "build-up",
+          quantityLabel: "Duels",
+          qualityLabel: "Won",
+          points: matches.map((match) => {
+            const won = match.duels?.offensiveWon.actions ?? 0;
+            const lost = match.duels?.offensiveLost.actions ?? 0;
+            const total = won + lost;
+            return {
+              ...base(match),
+              quantity: total,
+              quality: rate(won, total),
+              qualityDetail: `${won} of ${total} won`,
+            };
+          }),
+        }
+      : null,
+    everyDuels
+      ? {
+          id: "defensive-duels",
+          title: "Defensive Duels",
+          phase: "defensive",
+          quantityLabel: "Duels",
+          qualityLabel: "Won",
+          points: matches.map((match) => {
+            const won = match.duels?.defensiveWon.actions ?? 0;
+            const lost = match.duels?.defensiveLost.actions ?? 0;
+            const total = won + lost;
+            return {
+              ...base(match),
+              quantity: total,
+              quality: rate(won, total),
+              qualityDetail: `${won} of ${total} won`,
+            };
+          }),
+        }
+      : null,
+    everyDuels
+      ? {
+          id: "regains",
+          title: "Regains",
+          phase: "defensive",
+          quantityLabel: "Regains",
+          points: matches.map((match) => ({
+            ...base(match),
+            quantity: (match.duels?.interception.actions ?? 0) + (match.duels?.recovery.actions ?? 0),
+          })),
+        }
+      : null,
+  ];
+
+  return metrics.filter((metric): metric is ProgressMetric => metric !== null);
+}
