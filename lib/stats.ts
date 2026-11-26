@@ -411,6 +411,7 @@ export function positionMatch(match: MatchStats, position: MatchPosition): Match
     attackingMovement: position.attackingMovement,
     duels: position.duels,
     positions: undefined,
+    videos: [],
   };
 }
 

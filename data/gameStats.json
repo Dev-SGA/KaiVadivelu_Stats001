@@ -462,7 +462,40 @@
           }
         }
       ],
-      "videos": [],
+      "videos": [
+        {
+          "label": "Progressive Passes",
+          "url": "https://drive.google.com/file/d/1K47MzJbDh5SKAn2QjsWn_Dp-60NmChUB/view?usp=drive_link"
+        },
+        {
+          "label": "Turnover Passes",
+          "url": "https://drive.google.com/file/d/1vjb6byJnc-G48rTm3-fBcWcSntiumxrP/view?usp=drive_link"
+        },
+        {
+          "label": "Turnover Duels",
+          "url": "https://drive.google.com/file/d/1hNp_-BLyXmOkiqF0-smLILPVkA3AgLZD/view?usp=drive_link"
+        },
+        {
+          "label": "Def. Duels Won",
+          "url": "https://drive.google.com/file/d/1jwA-9nplSbXfGBSKCU_Gdz163i1tcds2/view?usp=drive_link"
+        },
+        {
+          "label": "Def. Duels Lost",
+          "url": "https://drive.google.com/file/d/1_RmIhiIV0UTkz3rHFMZ6bs0lSV1lagUk/view?usp=drive_link"
+        },
+        {
+          "label": "Interceptions",
+          "url": "https://drive.google.com/file/d/1Y3pgs-dXTUpX-a2tCpx2tAbCTHwwMoCg/view?usp=drive_link"
+        },
+        {
+          "label": "Recoveries",
+          "url": "https://drive.google.com/file/d/17EVu9yBvcm47ME4FuhQ5T8dcJbCDi1GQ/view?usp=drive_link"
+        },
+        {
+          "label": "Underlaps",
+          "url": "https://drive.google.com/file/d/1vx2CoybT7BiBgAgsuITCu1Tx3M8AUxcU/view?usp=drive_link"
+        }
+      ],
       "duels": {
         "offensiveWon": {
           "actions": 0,
