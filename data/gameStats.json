@@ -157,6 +157,7 @@
         "lostBalls": 1,
         "wrongPasses": 3,
         "lostPlays": 4,
+        "duelTurnover": 2,
         "videoLink": ""
       },
       "attackingMovement": {
@@ -187,6 +188,7 @@
             "lostBalls": 1,
             "wrongPasses": 2,
             "lostPlays": 3,
+            "duelTurnover": 1,
             "videoLink": ""
           },
           "attackingMovement": {
@@ -227,6 +229,7 @@
             "lostBalls": 0,
             "wrongPasses": 1,
             "lostPlays": 1,
+            "duelTurnover": 1,
             "videoLink": ""
           },
           "duels": {
