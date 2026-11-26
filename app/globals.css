@@ -250,8 +250,18 @@ body::before {
 .athlete-photo__overlay {
   position: absolute;
   inset: auto 0 0 0;
-  padding: 64px 20px 20px;
-  background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--sga-navy) 88%, transparent) 55%, var(--sga-navy) 100%);
+  padding: 72px 20px 20px;
+  background: linear-gradient(180deg, transparent 0%, rgba(2, 8, 13, 0.9) 50%, rgba(1, 5, 8, 0.98) 100%);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  pointer-events: none;
+}
+
+.athlete-photo:hover .athlete-photo__overlay,
+.athlete-photo:focus-within .athlete-photo__overlay {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .athlete-photo__label {
