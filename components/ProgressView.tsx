@@ -1,13 +1,13 @@
 "use client";
 
 import { useId, useState } from "react";
-import { formatCount, progressMetrics, type MatchStats, type ProgressMetric } from "@/lib/stats";
+import { formatCount, progressMetrics, projectedMatch, type MatchStats, type ProgressMetric } from "@/lib/stats";
 
-type Focus = "quantity" | "quality";
+type Focus = "volume" | "rate";
 type Pt = [number, number];
 
-const COLORS: Record<Focus, string> = { quantity: "#5aa2e0", quality: "#3fb56b" };
-const PHASE_LABEL = { "build-up": "Build-Up", defensive: "Defensive Phase" } as const;
+const COLORS: Record<Focus, string> = { volume: "#5aa2e0", rate: "#3fb56b" };
+const PHASE_LABEL = { offensive: "Offensive Phase", defensive: "Defensive Phase" } as const;
 const NICE_STEPS = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50, 60, 80, 100, 150, 200, 250, 500, 1000];
 const INK = "#04141f";
 
@@ -71,12 +71,12 @@ function seriesStats(values: number[]) {
   return { avg, best };
 }
 
-function Delta({ value, unit, tone }: { value: number; unit: string; tone: "neutral" | "quality" }) {
+function Delta({ value, unit, tone }: { value: number; unit: string; tone: "neutral" | "rate" }) {
   const rounded = Math.round(value * 10) / 10;
   const direction = rounded === 0 ? "flat" : rounded > 0 ? "up" : "down";
   const arrow = direction === "up" ? "▲" : direction === "down" ? "▼" : "■";
   const sign = rounded > 0 ? "+" : "";
-  const toneClass = tone === "quality" && direction !== "flat" ? ` prog-delta--${direction}` : "";
+  const toneClass = tone === "rate" && direction !== "flat" ? ` prog-delta--${direction}` : "";
   return (
     <span className={`prog-delta${toneClass}`}>
       <span aria-hidden="true">{arrow}</span> {sign}
@@ -92,26 +92,26 @@ function TrendChart({ metric, focus }: { metric: ProgressMetric; focus: Focus })
 
   const { points } = metric;
   const count = points.length;
-  const hasQuality = metric.qualityLabel != null;
-  const emphasized: Focus = hasQuality ? focus : "quantity";
+  const hasRate = metric.rateLabel != null;
+  const emphasized: Focus = hasRate ? focus : "volume";
 
-  const margin = { top: 24, right: hasQuality ? 42 : 12, bottom: 56, left: 36 };
+  const margin = { top: 24, right: hasRate ? 42 : 12, bottom: 56, left: 36 };
   const innerW = W - margin.left - margin.right;
   const innerH = H - margin.top - margin.bottom;
   const baseY = margin.top + innerH;
   const padX = count > 1 ? Math.min(22, innerW / (count * 2)) : 0;
   const colW = count > 1 ? (innerW - 2 * padX) / (count - 1) : innerW;
 
-  const { top: quantityTop, step } = niceScale(Math.max(...points.map((point) => point.quantity)));
+  const { top: volumeTop, step } = niceScale(Math.max(...points.map((point) => point.volume)));
   const xAt = (index: number) =>
     count === 1 ? margin.left + innerW / 2 : margin.left + padX + (index * (innerW - 2 * padX)) / (count - 1);
-  const yQuantity = (value: number) => margin.top + innerH * (1 - value / quantityTop);
-  const yQuality = (value: number) => margin.top + innerH * (1 - value / 100);
+  const yVolume = (value: number) => margin.top + innerH * (1 - value / volumeTop);
+  const yRate = (value: number) => margin.top + innerH * (1 - value / 100);
 
   const series = [
-    { key: "quantity" as const, values: points.map((point) => point.quantity), y: yQuantity, format: countLabel },
-    ...(hasQuality
-      ? [{ key: "quality" as const, values: points.map((point) => point.quality ?? 0), y: yQuality, format: pctLabel }]
+    { key: "volume" as const, values: points.map((point) => point.volume), y: yVolume, format: countLabel },
+    ...(hasRate
+      ? [{ key: "rate" as const, values: points.map((point) => point.rate ?? 0), y: yRate, format: pctLabel }]
       : []),
   ];
   const strongSeries = series.find((s) => s.key === emphasized) ?? series[0];
@@ -197,20 +197,20 @@ function TrendChart({ metric, focus }: { metric: ProgressMetric; focus: Focus })
                 dy="0.35em"
                 textAnchor="end"
                 className="prog-axis"
-                fill={COLORS.quantity}
-                opacity={emphasized === "quantity" ? 0.9 : 0.4}
+                fill={COLORS.volume}
+                opacity={emphasized === "volume" ? 0.9 : 0.4}
               >
                 {formatCount(step * tick)}
               </text>
-              {hasQuality ? (
+              {hasRate ? (
                 <text
                   x={W - margin.right + 9}
                   y={y}
                   dy="0.35em"
                   textAnchor="start"
                   className="prog-axis"
-                  fill={COLORS.quality}
-                  opacity={emphasized === "quality" ? 0.9 : 0.4}
+                  fill={COLORS.rate}
+                  opacity={emphasized === "rate" ? 0.9 : 0.4}
                 >
                   {tick * 25}%
                 </text>
@@ -258,11 +258,11 @@ function TrendChart({ metric, focus }: { metric: ProgressMetric; focus: Focus })
                 d={line}
                 fill="none"
                 stroke={color}
-                strokeWidth={strong ? 3 : 1.75}
+                strokeWidth={strong ? 3 : 1.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeDasharray={strong ? undefined : "5 6"}
-                strokeOpacity={strong ? 1 : 0.5}
+                strokeDasharray={strong ? undefined : "4 7"}
+                strokeOpacity={strong ? 1 : 0.3}
               />
               {pts.map(([px, py], index) => {
                 const isLast = index === count - 1;
@@ -273,11 +273,11 @@ function TrendChart({ metric, focus }: { metric: ProgressMetric; focus: Focus })
                       key={index}
                       cx={px}
                       cy={py}
-                      r={isHover ? 4.5 : 3}
+                      r={isHover ? 4.5 : 2.5}
                       fill={INK}
                       stroke={color}
-                      strokeOpacity={isHover ? 1 : 0.6}
-                      strokeWidth={1.75}
+                      strokeOpacity={isHover ? 1 : 0.35}
+                      strokeWidth={1.5}
                     />
                   );
                 }
@@ -387,17 +387,17 @@ function TrendChart({ metric, focus }: { metric: ProgressMetric; focus: Focus })
             return (
               <p key={s.key} className={`prog-tip__row${s.key === emphasized ? " is-strong" : ""}`}>
                 <span className="prog-tip__dot" style={{ background: COLORS[s.key] }} />
-                {s.key === "quantity" ? metric.quantityLabel : metric.qualityLabel}
+                {s.key === "volume" ? metric.volumeLabel : metric.rateLabel}
                 <strong>{s.format(value)}</strong>
                 <span className={`prog-tip__vs prog-tip__vs--${tone}`}>
                   {diff >= 0 ? "+" : "−"}
-                  {s.key === "quality" ? `${Math.abs(Math.round(diff))} pts` : countLabel(Math.abs(diff))}
+                  {s.key === "rate" ? `${Math.abs(Math.round(diff))} pts` : countLabel(Math.abs(diff))}
                 </span>
               </p>
             );
           })}
           <p className="prog-tip__detail">
-            {hovered.qualityDetail ? `${hovered.qualityDetail} · ` : ""}± vs average
+            {hovered.rateDetail ? `${hovered.rateDetail} · ` : ""}± vs average
           </p>
         </div>
       ) : null}
@@ -414,21 +414,21 @@ function MetricCard({
   focus: Focus;
   onFocus: (focus: Focus) => void;
 }) {
-  const hasQuality = metric.qualityLabel != null;
-  const emphasized: Focus = hasQuality ? focus : "quantity";
-  const isRate = emphasized === "quality";
+  const hasRate = metric.rateLabel != null;
+  const emphasized: Focus = hasRate ? focus : "volume";
+  const isRate = emphasized === "rate";
   const { points } = metric;
   const last = points[points.length - 1];
   const previous = points.length > 1 ? points[points.length - 2] : null;
-  const values = points.map((point) => (isRate ? point.quality ?? 0 : point.quantity));
+  const values = points.map((point) => (isRate ? point.rate ?? 0 : point.volume));
   const format = isRate ? pctLabel : countLabel;
   const stats = seriesStats(values);
   const bestPoint = points[stats.best];
 
   const delta = previous
     ? isRate
-      ? { value: Math.round(last.quality ?? 0) - Math.round(previous.quality ?? 0), unit: " pts", tone: "quality" as const }
-      : { value: last.quantity - previous.quantity, unit: "", tone: "neutral" as const }
+      ? { value: Math.round(last.rate ?? 0) - Math.round(previous.rate ?? 0), unit: " pts", tone: "rate" as const }
+      : { value: last.volume - previous.volume, unit: "", tone: "neutral" as const }
     : null;
   return (
     <article className={`prog-card prog-card--${metric.phase}`}>
@@ -471,9 +471,9 @@ function MetricCard({
         </div>
       </dl>
 
-      {hasQuality ? (
+      {hasRate ? (
         <div className="prog-legend" role="group" aria-label={`${metric.title} highlight`}>
-          {(["quantity", "quality"] as const).map((key) => (
+          {(["volume", "rate"] as const).map((key) => (
             <button
               key={key}
               type="button"
@@ -482,15 +482,15 @@ function MetricCard({
               onClick={() => onFocus(key)}
             >
               <span className={`prog-legend__swatch prog-legend__swatch--${key}`} />
-              {key === "quantity" ? metric.quantityLabel : `${metric.qualityLabel} %`}
+              {key === "volume" ? metric.volumeLabel : `${metric.rateLabel} %`}
             </button>
           ))}
         </div>
       ) : (
         <div className="prog-legend">
           <span className="prog-legend__item is-active is-static">
-            <span className="prog-legend__swatch prog-legend__swatch--quantity" />
-            {metric.quantityLabel}
+            <span className="prog-legend__swatch prog-legend__swatch--volume" />
+            {metric.volumeLabel}
           </span>
         </div>
       )}
@@ -500,9 +500,12 @@ function MetricCard({
   );
 }
 
-export function ProgressView({ matches, initialFocus = "quantity" }: { matches: MatchStats[]; initialFocus?: Focus }) {
+export function ProgressView({ matches, initialFocus = "volume" }: { matches: MatchStats[]; initialFocus?: Focus }) {
   const [focus, setFocus] = useState<Focus>(initialFocus);
-  const metrics = progressMetrics(matches);
+  const [per90, setPer90] = useState(false);
+  const hasMinutes = matches.some((match) => match.minutes !== undefined && match.minutes < 90);
+  const shown = per90 ? matches.map((match) => (match.minutes ? projectedMatch(match) : match)) : matches;
+  const metrics = progressMetrics(shown);
 
   return (
     <section className="progress" aria-label="Progress across matches">
@@ -513,10 +516,33 @@ export function ProgressView({ matches, initialFocus = "quantity" }: { matches: 
             Match-by-match trend · {matches.length} {matches.length === 1 ? "match" : "matches"}
           </p>
         </div>
+        {hasMinutes ? (
+          <div className="progress__focus" role="group" aria-label="Scale">
+            <span className="progress__focus-label">Scale</span>
+            <div className="match-nav__pills">
+              <button
+                type="button"
+                className={`match-nav__pill${per90 ? "" : " is-active"}`}
+                aria-pressed={!per90}
+                onClick={() => setPer90(false)}
+              >
+                Totals
+              </button>
+              <button
+                type="button"
+                className={`match-nav__pill${per90 ? " is-active" : ""}`}
+                aria-pressed={per90}
+                onClick={() => setPer90(true)}
+              >
+                Per 90'
+              </button>
+            </div>
+          </div>
+        ) : null}
         <div className="progress__focus" role="group" aria-label="Highlight">
           <span className="progress__focus-label">Highlight</span>
           <div className="match-nav__pills">
-            {(["quantity", "quality"] as const).map((key) => (
+            {(["volume", "rate"] as const).map((key) => (
               <button
                 key={key}
                 type="button"
@@ -524,7 +550,7 @@ export function ProgressView({ matches, initialFocus = "quantity" }: { matches: 
                 aria-pressed={focus === key}
                 onClick={() => setFocus(key)}
               >
-                {key === "quantity" ? "Quantity" : "Quality"}
+                {key === "volume" ? "Volume" : "Rate"}
               </button>
             ))}
           </div>
@@ -538,8 +564,9 @@ export function ProgressView({ matches, initialFocus = "quantity" }: { matches: 
       </div>
 
       <p className="progress__note">
-        Quantity is the raw count per match; quality is the success rate. The dotted line marks the average of the
-        highlighted series. Only metrics recorded in every match are shown.
+        Volume is the raw count per match; rate is the percentage split (success rate or share of the total).
+        The dotted line marks the average of the highlighted series. Only metrics recorded in every match are
+        shown.
       </p>
     </section>
   );

@@ -1853,6 +1853,14 @@ body::before {
     grid-template-columns: 1fr;
   }
 
+  .view-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .match-nav {
+    min-width: 0;
+  }
+
   .athlete-column {
     position: static;
   }
@@ -2522,12 +2530,12 @@ body::before {
   border-radius: 2px;
 }
 
-.prog-legend__swatch--quantity {
+.prog-legend__swatch--volume {
   background: #5aa2e0;
   box-shadow: 0 0 8px rgba(90, 162, 224, 0.6);
 }
 
-.prog-legend__swatch--quality {
+.prog-legend__swatch--rate {
   background: #3fb56b;
   box-shadow: 0 0 8px rgba(63, 181, 107, 0.6);
 }
