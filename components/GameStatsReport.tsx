@@ -18,6 +18,7 @@ import {
   formatCount,
   matchSummary,
   perGameMatch,
+  positionMatch,
   projectedMatch,
   seasonMatch,
   toGameStats,
@@ -344,8 +345,14 @@ export function GameStatsReport({ report }: GameStatsReportProps) {
   const [matchId, setMatchId] = useState(initialMatchId);
   const match = options.find((item) => item.id === matchId) ?? options[0];
   const [projected, setProjected] = useState(false);
-  useEffect(() => setProjected(false), [match.id]);
-  const displayMatch = match.minutes && projected ? projectedMatch(match) : match;
+  const [positionId, setPositionId] = useState<string>("all");
+  useEffect(() => {
+    setProjected(false);
+    setPositionId("all");
+  }, [match.id]);
+  const position = match.positions?.find((item) => item.id === positionId);
+  const baseMatch = position ? positionMatch(match, position) : match;
+  const displayMatch = baseMatch.minutes && projected ? projectedMatch(baseMatch) : baseMatch;
   const exportStats: GameStats = useMemo(() => toGameStats(report, displayMatch), [report, displayMatch]);
   const topics = useMemo(() => buildTopics(displayMatch), [displayMatch]);
 
@@ -405,10 +412,33 @@ export function GameStatsReport({ report }: GameStatsReportProps) {
                 <>
                   <MatchSwitcher matches={options} activeId={match.id} onChange={setMatchId}>
                     {match.id === "season" ? <SeasonModeToggle mode={seasonMode} onChange={setSeasonMode} /> : null}
+                    {match.positions?.length ? (
+                      <div className="match-nav__pills season-mode" role="group" aria-label="Positions">
+                        <button
+                          type="button"
+                          className={`match-nav__pill${positionId === "all" ? " is-active" : ""}`}
+                          aria-pressed={positionId === "all"}
+                          onClick={() => setPositionId("all")}
+                        >
+                          All
+                        </button>
+                        {match.positions.map((item) => (
+                          <button
+                            key={item.id}
+                            type="button"
+                            className={`match-nav__pill${item.id === positionId ? " is-active" : ""}`}
+                            aria-pressed={item.id === positionId}
+                            onClick={() => setPositionId(item.id)}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
                   </MatchSwitcher>
                   <TopicsBoard
                     topics={topics}
-                    minutes={match.minutes}
+                    minutes={displayMatch.minutes}
                     projected={projected}
                     onProjectedChange={setProjected}
                   />

@@ -37,6 +37,36 @@ export type AttackingMovement = {
   underlaps: RunStat;
 };
 
+/** Per-position numbers for a match where the athlete played multiple roles. */
+export type MatchPosition = {
+  id: string;
+  label: string;
+  minutes: number;
+  passesUnderPressure: {
+    total: number;
+    underPressure: number;
+    notUnderPressure: number;
+    videoLink: string;
+  };
+  passResults: {
+    combined?: PassResultBreakdown;
+    underPressure?: PassResultBreakdown;
+    notUnderPressure?: PassResultBreakdown;
+    videoLink: string;
+  };
+  possessions: {
+    total: number;
+    lostBalls: number;
+    wrongPasses: number;
+    lostPlays: number;
+    passTurnover?: number;
+    duelTurnover?: number;
+    videoLink: string;
+  };
+  attackingMovement?: AttackingMovement;
+  duels: DuelBlock | null;
+};
+
 export type MatchStats = {
   id: string;
   kind: MatchKind;
@@ -70,6 +100,7 @@ export type MatchStats = {
   videos?: { label: string; url: string }[];
   duels: DuelBlock | null;
   attackingMovement?: AttackingMovement;
+  positions?: MatchPosition[];
   games?: number;
   /** Minutes played, when shorter than a full match. */
   minutes?: number;
@@ -364,6 +395,22 @@ export function perGameMatch(season: MatchStats): MatchStats {
     duels: scaleNumbers(season.duels, factor),
     games: undefined,
     perGame: true,
+  };
+}
+
+/** Match shape scoped to a single position, so every downstream view works unchanged. */
+export function positionMatch(match: MatchStats, position: MatchPosition): MatchStats {
+  return {
+    ...match,
+    label: `${match.label} · ${position.label}`,
+    shortLabel: position.label,
+    minutes: position.minutes,
+    passesUnderPressure: position.passesUnderPressure,
+    passResults: position.passResults,
+    possessions: position.possessions,
+    attackingMovement: position.attackingMovement,
+    duels: position.duels,
+    positions: undefined,
   };
 }
 

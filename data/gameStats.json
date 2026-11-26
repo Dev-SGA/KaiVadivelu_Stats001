@@ -128,6 +128,130 @@
         "interception": { "actions": 5, "good": 0, "bad": 0 },
         "recovery": { "actions": 9, "good": 0, "bad": 0 }
       }
+    },
+    {
+      "id": "match-3",
+      "kind": "session",
+      "label": "Match 3",
+      "shortLabel": "Match 3",
+      "logo": "",
+      "minutes": 65,
+      "goals": 0,
+      "assists": 0,
+      "passesUnderPressure": {
+        "total": 20,
+        "underPressure": 0,
+        "notUnderPressure": 0,
+        "videoLink": ""
+      },
+      "passResults": {
+        "combined": {
+          "progressive": 4,
+          "neutral": 13,
+          "lost": 3
+        },
+        "videoLink": ""
+      },
+      "possessions": {
+        "total": 25,
+        "lostBalls": 1,
+        "wrongPasses": 3,
+        "lostPlays": 4,
+        "videoLink": ""
+      },
+      "attackingMovement": {
+        "overlaps": { "total": 0, "received": 0 },
+        "underlaps": { "total": 3, "received": 2 }
+      },
+      "positions": [
+        {
+          "id": "left-back",
+          "label": "Left back",
+          "minutes": 40,
+          "passesUnderPressure": {
+            "total": 11,
+            "underPressure": 0,
+            "notUnderPressure": 0,
+            "videoLink": ""
+          },
+          "passResults": {
+            "combined": {
+              "progressive": 2,
+              "neutral": 7,
+              "lost": 2
+            },
+            "videoLink": ""
+          },
+          "possessions": {
+            "total": 14,
+            "lostBalls": 1,
+            "wrongPasses": 2,
+            "lostPlays": 3,
+            "videoLink": ""
+          },
+          "attackingMovement": {
+            "overlaps": { "total": 0, "received": 0 },
+            "underlaps": { "total": 3, "received": 2 }
+          },
+          "duels": {
+            "offensiveWon": { "actions": 0, "good": 0, "bad": 0 },
+            "offensiveLost": { "actions": 0, "good": 0, "bad": 0 },
+            "fouled": { "actions": 0, "good": 0, "bad": 0 },
+            "defensiveWon": { "actions": 4, "good": 0, "bad": 0 },
+            "defensiveLost": { "actions": 1, "good": 0, "bad": 0 },
+            "fouls": { "actions": 0, "good": 0, "bad": 0 },
+            "interception": { "actions": 1, "good": 0, "bad": 0 },
+            "recovery": { "actions": 1, "good": 0, "bad": 0 }
+          }
+        },
+        {
+          "id": "midfielder",
+          "label": "Midfielder",
+          "minutes": 25,
+          "passesUnderPressure": {
+            "total": 9,
+            "underPressure": 0,
+            "notUnderPressure": 0,
+            "videoLink": ""
+          },
+          "passResults": {
+            "combined": {
+              "progressive": 2,
+              "neutral": 6,
+              "lost": 1
+            },
+            "videoLink": ""
+          },
+          "possessions": {
+            "total": 11,
+            "lostBalls": 0,
+            "wrongPasses": 1,
+            "lostPlays": 1,
+            "videoLink": ""
+          },
+          "duels": {
+            "offensiveWon": { "actions": 0, "good": 0, "bad": 0 },
+            "offensiveLost": { "actions": 0, "good": 0, "bad": 0 },
+            "fouled": { "actions": 0, "good": 0, "bad": 0 },
+            "defensiveWon": { "actions": 0, "good": 0, "bad": 0 },
+            "defensiveLost": { "actions": 0, "good": 0, "bad": 0 },
+            "fouls": { "actions": 0, "good": 0, "bad": 0 },
+            "interception": { "actions": 0, "good": 0, "bad": 0 },
+            "recovery": { "actions": 2, "good": 0, "bad": 0 }
+          }
+        }
+      ],
+      "videos": [],
+      "duels": {
+        "offensiveWon": { "actions": 0, "good": 0, "bad": 0 },
+        "offensiveLost": { "actions": 0, "good": 0, "bad": 0 },
+        "fouled": { "actions": 0, "good": 0, "bad": 0 },
+        "defensiveWon": { "actions": 4, "good": 0, "bad": 0 },
+        "defensiveLost": { "actions": 1, "good": 0, "bad": 0 },
+        "fouls": { "actions": 0, "good": 0, "bad": 0 },
+        "interception": { "actions": 1, "good": 0, "bad": 0 },
+        "recovery": { "actions": 3, "good": 0, "bad": 0 }
+      }
     }
   ]
 }
